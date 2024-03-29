@@ -1,22 +1,42 @@
-import React from "react";
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import { useGlobalStates } from '../Context/Context.jsx';
+import doctor from '../utils/images/doctor.jpg'
 
 
-const Card = ({ name, username, id }) => {
+const Card = ({ dentist }) => {
+    const { state, dispatch } = useGlobalStates();
+    const favorite = state.favorites.find((dent) => dent.id === dentist.id);
 
-  const addFav = ()=>{
-    // Aqui iria la logica para agregar la Card en el localStorage
-  }
+    const addFavorite = () => dispatch({ type: 'ADD_FAVORITE', payload: dentist });
+    const removeFavorite = () => dispatch({ type: 'REMOVE_FAVORITE', payload: dentist.id });
 
-  return (
-    <div className="card">
-        {/* En cada card deberan mostrar en name - username y el id */}
+    const handleClick = () => {
+        state.favorites.find((dent) => dent.id === dentist.id) ? removeFavorite() : addFavorite();
+    };
 
-        {/* No debes olvidar que la Card a su vez servira como Link hacia la pagina de detalle */}
+    return (
+        <article className='lacarta'>
+            <Link to={`/dentist/${dentist.id}`}>
+                <img src= {doctor} style={{maxWidth: '500px', maxHeight: '200px'}} />
+                <h2>{dentist.name}</h2>
+                <p>Especialidad:</p>
+                <p>Dentalis 🦇 Tormentis</p>
+               
+                <p>@{dentist.username.toLowerCase()}</p>
+            </Link>
+            <button onClick={handleClick} title="Agrega a Favoritos">
+            <i role="img"
+               aria-label="Star"
+               style={{ marginRight: '5px' }}>{favorite ? '⭐️' : '☆'}
+    </i>
+            </button>
+        </article>
+    );
+};
 
-        {/* Ademas deberan integrar la logica para guardar cada Card en el localStorage */}
-        <button onClick={addFav} className="favButton">Add fav</button>
-    </div>
-  );
+Card.propTypes = {
+    dentist: PropTypes.object,
 };
 
 export default Card;
